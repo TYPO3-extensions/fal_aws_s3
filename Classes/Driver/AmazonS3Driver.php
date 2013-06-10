@@ -36,21 +36,21 @@ namespace CORE4\FalAwsS3\Driver;
  * @todo Handle exceptions, write tests
  */
 class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
-	
+
 	const FILTER_ALL = 'all';
-	
+
 	const FILTER_FOLDERS = 'folders';
-	
+
 	const FILTER_FILES = 'files';
-	
+
 	const ROOT_FOLDER_IDENTIFIER = '/';
-	
-	
+
+
 	/**
 	 * @var \Aws\S3\S3Client
 	 */
 	protected $s3Client;
-	
+
 	/**
 	 * The base URL that points to this driver's storage. As long is this is not set, it is assumed that this folder
 	 * is not publicly available
@@ -58,31 +58,31 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @var \string
 	 */
 	protected $baseUrl;
-	
+
 	/**
 	 * The identifier map used for renaming
-	 * 
+	 *
 	 * @var \array<\string>
 	 */
 	protected $identifierMap;
-	
+
 	/**
 	 * Object existence is cached here like:
 	 * $identifier => TRUE|FALSE
-	 * 
-	 * @var \array<\boolean> 
+	 *
+	 * @var \array<\boolean>
 	 */
 	protected $objectExistenceCache = array();
-	
+
 	/**
 	 * Object permissions are cached here in subarrays like:
 	 * $identifier => array('r' => \boolean, 'w' => \boolean)
 	 * 
-	 * @var \array<\array> 
+	 * @var \array<\array>
 	 */
 	protected $objectPermissionsCache = array();
-	
-	
+
+
 	/**
 	 * @param array $configuration
 	 * @return boolean
@@ -113,7 +113,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		$this->capabilities = \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_BROWSABLE | \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_PUBLIC | \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_WRITABLE;
 		$this->initializeClient();
 	}
-	
+
 	/**
 	 * @return void
 	 */
@@ -126,7 +126,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			$this->baseUrl .= $this->configuration['bucket'] . '.s3.amazonaws.com/';
 		}
 	}
-	
+
 	/**
 	 * @return void
 	 * @see http://docs.aws.amazon.com/aws-sdk-php-2/latest/class-Aws.S3.S3Client.html#_factory
@@ -140,7 +140,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		));
 		\Aws\S3\StreamWrapper::register($this->s3Client);
 	}
-	
+
 
 	/**
 	 * @param \TYPO3\CMS\Core\Resource\ResourceInterface $resource
@@ -153,7 +153,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Creates a (cryptographic) hash for a file.
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\FileInterface $file
 	 * @param string $hashAlgorithm
 	 * @return string
@@ -193,7 +193,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			'Bucket' => $this->configuration['bucket'],
 			'Key' => $identifier
 		))->toArray();
-		
+
 		return array(
 			'name' => basename($identifier),
 			'identifier' => $identifier,
@@ -235,24 +235,23 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		if ($path === self::ROOT_FOLDER_IDENTIFIER) {
 			$path = '';
 		}
-		
+
 		$response = $this->s3Client->listObjects(array(
 			'Bucket' => $this->configuration['bucket'],
 			'Prefix' => $path
 		))->toArray();
-		
+
 		foreach ($response['Contents'] as $fileCandidate) {
 			// skip directory entries
 			if (substr($fileCandidate['Key'], -1) === '/') {
 				continue;
 			}
-			
+
 			// skip subdirectory entries
 			if (!$recursive && substr_count($fileCandidate['Key'], '/') > substr_count($path, '/')) {
 				continue;
 			}
 
-			
 			$fileName = basename($fileCandidate['Key']);
 			$files[$fileCandidate['Key']] = array(
 				'name' => $fileName,
@@ -262,7 +261,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				'storage' => $this->storage->getUid()
 			);
 		}
-		
+
 		return $files;
 	}
 
@@ -272,14 +271,14 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @param string $path
 	 * @param string $pattern
 	 * @return array
-	 * 
+	 *
 	 * @todo handle errors
 	 * @todo implement caching
 	 */
 	public function getFolderList($path, $pattern = '') {
 		$this->normalizeIdentifier($path);
 		$folders = array();
-		
+
 		$configuration = array(
 			'Bucket' => $this->configuration['bucket']
 		);
@@ -309,7 +308,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				);
 			}
 		}
-		
+
 		return $folders;
 	}
 
@@ -343,7 +342,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Checks if a folder exists
-	 * 
+	 *
 	 * @param \string $identifier
 	 * @return \boolean
 	 */
@@ -357,10 +356,10 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		}
 		return $this->objectExists($identifier);
 	}
-	
+
 	/**
 	 * Checks if an object exists
-	 * 
+	 *
 	 * @param \string $identifier
 	 * @return \boolean
 	 */
@@ -384,7 +383,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Checks if a folder exists inside a storage folder
-	 * 
+	 *
 	 * @param \string $folderName
 	 * @param \TYPO3\CMS\Core\Resource\Folder $folder
 	 * @return \boolean
@@ -412,7 +411,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		} else {
 			$localIdentifier = $localFilePath;
 			$this->normalizeIdentifier($localIdentifier);
-			
+
 			if ($this->objectExists($localIdentifier)) {
 				$moveResult = rename(
 					$this->getStreamWrapperPath($localIdentifier),
@@ -425,7 +424,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				);
 			}
 		}
-		
+
 		$fileInfo = $this->getFileInfoByIdentifier($targetIdentifier);
 		if ($updateFileObject) {
 			$updateFileObject->updateProperties($fileInfo);
@@ -438,7 +437,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Adds a file at the specified location. This should only be used internally.
-	 * 
+	 *
 	 * @param \string $localFilePath
 	 * @param \TYPO3\CMS\Core\Resource\Folder $targetFolder
 	 * @param \string $targetFileName
@@ -478,7 +477,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		$this->copyObject($file->getIdentifier(), $targetIdentifier);
 		return $this->getFile($targetIdentifier);
 	}
-	
+
 	/**
 	 * @param \string $identifier
 	 * @param \string $targetIdentifier
@@ -503,7 +502,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Replaces the contents (and file-specific metadata) of a file object with a local file.
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\AbstractFile $file
 	 * @param \string $localFilePath
 	 * @return void
@@ -516,7 +515,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Copies a file to a temporary path and returns that path.
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\FileInterface $file
 	 * @return \string The temporary path
 	 * @throws \RuntimeException
@@ -540,7 +539,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
 		$this->deleteObject($file->getIdentifier());
 	}
-	
+
 	/**
 	 * @param \TYPO3\CMS\Core\Resource\Folder $folder
 	 * @param \boolean $deleteRecursively
@@ -553,7 +552,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				'Bucket' => $this->configuration['bucket'],
 				'Prefix' => $folder->getIdentifier()
 			))->toArray();
-			
+
 			foreach ($items['Contents'] as $object) {
 				// Filter the folder itself
 				if ($object['Key'] !== $folder->getIdentifier()) {
@@ -568,7 +567,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				}
 			}
 		}
-		
+
 		$this->deleteObject($folder->getIdentifier());
 	}
 	
@@ -582,10 +581,10 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			'Key'    => $identifier
 		));
 	}
-	
+
 	/**
 	 * Returns a (local copy of) a file for processing it.
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\FileInterface $file
 	 * @param \boolean $writable
 	 * @return \string
@@ -613,7 +612,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
 		return $this->getObjectPermissions($folder->getIdentifier());
 	}
-	
+
 	/**
 	 * @param \string $identifier
 	 * @return \array<\boolean>
@@ -646,7 +645,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			}
 			$this->objectPermissionsCache[$identifier] = $permissions;
 		}
-		
+
 		return $this->objectPermissionsCache[$identifier];
 	}
 
@@ -666,7 +665,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	/**
 	 * Creates a new folder by putting a folder dummy object into the storage.
 	 * The stream wrapper mkdir function is not applicable because it creates a new bucket.
-	 * 
+	 *
 	 * @param \string $newFolderName
 	 * @param \TYPO3\CMS\Core\Resource\Folder $parentFolder
 	 * @return \TYPO3\CMS\Core\Resource\Folder
@@ -674,7 +673,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	public function createFolder($newFolderName, \TYPO3\CMS\Core\Resource\Folder $parentFolder) {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newFolderName => $parentFolder), 'Hello from ' . __METHOD__);
 		$newFolderName = trim($newFolderName, '/');
-		
+
 		$identifier = $parentFolder->getIdentifier() . $newFolderName . '/';
 		$this->createObject($identifier);
 		return \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance()->createFolderObject($this->storage, $identifier, $newFolderName);
@@ -690,21 +689,21 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			'Key' => $identifier
 		));
 	}
-	
+
 	/**
 	 * @param \TYPO3\CMS\Core\Resource\FileInterface $file
 	 * @return \string
 	 */
 	public function getFileContents(\TYPO3\CMS\Core\Resource\FileInterface $file) {
 		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
-		
+
 		$result = $this->s3Client->getObject(array(
 		    'Bucket' => $this->configuration['bucket'],
 			'Key'    => $file->getIdentifier()
 		));
 		return (string) $result['Body'];
 	}
-	
+
 	/**
 	 * @param \TYPO3\CMS\Core\Resource\FileInterface $file
 	 * @param \string $contents
@@ -714,7 +713,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $contents), 'Hello from ' . __METHOD__);
 		return file_put_contents($this->getStreamWrapperPath($file->getIdentifier()), $contents);
 	}
-	
+
 	/**
 	 * @param \TYPO3\CMS\Core\Resource\FileInterface $file
 	 * @param \string $newName
@@ -729,10 +728,10 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		$this->renameObject($file->getIdentifier(), $newIdentifier);
 		return $newIdentifier;
 	}
-	
+
 	/**
 	 * Renames a folder by renaming the virtual folder object as well as all its child objects
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\Folder $folder
 	 * @param \string $newName
 	 * @return \array<\string>
@@ -740,7 +739,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	public function renameFolder(\TYPO3\CMS\Core\Resource\Folder $folder, $newName) {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newName => $folder), 'Hello from ' . __METHOD__);
 		$this->resetIdentifierMap();
-		
+
 		$parentFolderName = dirname($folder->getIdentifier());
 		if ($parentFolderName === '.') {
 			$parentFolderName = '';
@@ -748,7 +747,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			$parentFolderName .= '/';
 		}
 		$newIdentifier = $parentFolderName . $newName . '/';
-		
+
 		foreach ($this->getSubObjects($folder->getIdentifier(), FALSE) as $object) {
 			$subObjectIdentifier = $object['Key'];
 			if (self::is_dir($subObjectIdentifier)) {
@@ -758,15 +757,15 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				$this->renameObject($subObjectIdentifier, $newSubObjectIdentifier);
 			}
 		}
-		
+
 		$this->renameObject($folder->getIdentifier(), $newIdentifier);
 		return $this->identifierMap;
 	}
-	
+
 	/**
 	 * Renames a given subfolder by renaming all its sub objects and the folder itself.
 	 * Used for renaming child objects of a renamed a parent object.
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\Folder $folder
 	 * @param \string $newDirName The new directory name the folder will reside in
 	 * @return void
@@ -782,15 +781,15 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 				$this->renameObject($subObjectIdentifier, $newSubObjectIdentifier);
 			}
 		}
-		
+
 		$newIdentifier = $newDirName . $folder->getName() . '/';
 		$this->renameObject($folder->getIdentifier(), $newIdentifier);
 	}
-	
+
 	/**
 	 * Returns all sub objects for the parent object given by identifier, excluding the parent object itself.
 	 * If the $recursive flag is disabled, only objects on the exact next level are returned.
-	 * 
+	 *
 	 * @param \string $identifier
 	 * @param \boolean $recursive
 	 * @return \array
@@ -800,7 +799,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			'Bucket' => $this->configuration['bucket'],
 			'Prefix' => $identifier
 		))->toArray();
-		
+
 		return array_filter(
 			$result['Contents'],
 			function(&$object) use ($identifier, $recursive, $filter) {
@@ -825,7 +824,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Renames an object using the StreamWrapper
-	 * 
+	 *
 	 * @param \string $identifier
 	 * @param \string $newIdentifier
 	 * @return void
@@ -835,10 +834,10 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		rename($this->getStreamWrapperPath($identifier), $this->getStreamWrapperPath($newIdentifier));
 		$this->identifierMap[$identifier] = $newIdentifier;
 	}
-	
+
 	/**
 	 * Folder equivalent to moveFileWithinStorage().
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\Folder $folderToMove
 	 * @param \TYPO3\CMS\Core\Resource\Folder $targetFolder
 	 * @param \string $newFolderName
@@ -847,13 +846,13 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	public function moveFolderWithinStorage(\TYPO3\CMS\Core\Resource\Folder $folderToMove, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $newFolderName) {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderToMove, $targetFolder, $newFolderName), 'Hello from ' . __METHOD__);
 		$this->resetIdentifierMap();
-		
+
 		$newIdentifier = $targetFolder->getIdentifier() . $newFolderName . '/';
 		$this->renameObject($folderToMove->getIdentifier(), $newIdentifier);
-		
+
 		$subObjects = $this->getSubObjects($folderToMove->getIdentifier());
 		$this->sortObjectsForNestedFolderOperations($subObjects);
-		
+
 		foreach ($subObjects as $subObject) {
 			$newIdentifier = $targetFolder->getIdentifier() . $newFolderName . '/' . substr($subObject['Key'], strlen($folderToMove->getIdentifier()));
 			$this->renameObject($subObject['Key'], $newIdentifier);
@@ -869,24 +868,24 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 */
 	public function copyFolderWithinStorage(\TYPO3\CMS\Core\Resource\Folder $folderToCopy, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $newFolderName) {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderToCopy, $targetFolder, $newFolderName), 'Hello from ' . __METHOD__);
-		
+
 		$newIdentifier = $targetFolder->getIdentifier() . $newFolderName . '/';
 		$this->copyObject($folderToCopy->getIdentifier(), $newIdentifier);
-		
+
 		$subObjects = $this->getSubObjects($folderToCopy->getIdentifier());
 		$this->sortObjectsForNestedFolderOperations($subObjects);
-		
+
 		foreach ($subObjects as $subObject) {
 			$newIdentifier = $targetFolder->getIdentifier() . $newFolderName . '/' . substr($subObject['Key'], strlen($folderToCopy->getIdentifier()));
 			$this->copyObject($subObject['Key'], $newIdentifier);
 		}
-		
+
 		return TRUE;
 	}
 
 	/**
 	 * Returns a folder within the given folder.
-	 * 
+	 *
 	 * @param \string $name
 	 * @param \TYPO3\CMS\Core\Resource\Folder $parentFolder
 	 * @return \TYPO3\CMS\Core\Resource\Folder
@@ -917,7 +916,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Checks if a given identifier is within a container, e.g. if a file or folder is within another folder.
-	 * 
+	 *
 	 * @param \TYPO3\CMS\Core\Resource\Folder $folder
 	 * @param \string $identifier
 	 * @return \boolean
@@ -929,7 +928,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
 	/**
 	 * Checks if a resource exists - does not care for the type (file or folder), since S3 doesn't distinguish them anyway.
-	 * 
+	 *
 	 * @param \string $identifier
 	 * @return \boolean
 	 */
@@ -937,14 +936,14 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump('Hello from ' . __METHOD__, $identifier);
 		return $this->objectExists($identifier);
 	}
-	
+
 	/**
 	 * @return void
 	 */
 	public function resetIdentifierMap() {
 		$this->identifierMap = array();
 	}
-	
+
 	/**
 	 * @param \string &$identifier
 	 */
@@ -953,7 +952,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			$identifier = ltrim($identifier, '/');
 		}
 	}
-	
+
 	/**
 	 * @param \array<\array> $objects S3 Objects as arrays with at least the Key field set
 	 * @return void
@@ -979,7 +978,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns the StreamWrapper path of a file or folder.
 	 *
@@ -1000,7 +999,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		$this->normalizeIdentifier($identifier);
 		return $basePath . $identifier;
 	}
-	
+
 	/**
 	 * Returns whether the object defined by its identifier is a folder
 	 * 
@@ -1010,7 +1009,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	public static function is_dir($identifier) {
 		return substr($identifier, -1) === '/';
 	}
-	
+
 }
 
 ?>
