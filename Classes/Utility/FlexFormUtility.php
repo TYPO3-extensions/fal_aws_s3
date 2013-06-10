@@ -36,7 +36,7 @@ namespace CORE4\FalAwsS3\Utility;
  * @subpackage fal_aws_s3
  */
 class FlexFormUtility implements \TYPO3\CMS\Core\SingletonInterface {
-	
+
 	/**
 	 * @return FlexFormUtility
 	 */
@@ -47,7 +47,7 @@ class FlexFormUtility implements \TYPO3\CMS\Core\SingletonInterface {
 		}
 		require_once $configuration['composerPath'] . 'vendor/autoload.php';
 	}
-	
+
 	/**
 	 * @param \array& $config
 	 * @return void
@@ -55,14 +55,14 @@ class FlexFormUtility implements \TYPO3\CMS\Core\SingletonInterface {
 	public function addDriverConfigurationRegions(array& $config) {
 		$regionOptions = array();
 		$reflection = new \ReflectionClass('\Aws\Common\Enum\Region');
-		
+
 		foreach ($reflection->getConstants() as $constant => $value) {
 			$regionOptions[] = array($constant, $value);
 		}
-		
+
 		$config['items'] = array_merge($config['items'], $regionOptions);
 	}
-	
+
 }
 
 ?>

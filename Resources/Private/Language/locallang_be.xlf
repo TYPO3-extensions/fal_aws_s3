@@ -6,7 +6,7 @@
 			<trans-unit id="constants.customsubcategory.resources">
 				<source>Resources</source>
 			</trans-unit>
-			
+
 			<trans-unit id="constants.composerPath">
 				<source>Composer path:The absolute path to your composer packages, leading to but excluding the "vendors" folder, including trailing slash.<br />
 If left empty, PATH_site . 'typo3conf/' will be used.</source>
