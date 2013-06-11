@@ -377,7 +377,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function fileExistsInFolder($fileName, \TYPO3\CMS\Core\Resource\Folder $folder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($fileName => $folder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($fileName => $folder), 'Hello from ' . __METHOD__);
 		return $this->objectExists($folder->getIdentifier() . $fileName);
 	}
 
@@ -389,7 +389,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function folderExistsInFolder($folderName, \TYPO3\CMS\Core\Resource\Folder $folder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderName => $folder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderName => $folder), 'Hello from ' . __METHOD__);
 		return $this->objectExists($folder->getIdentifier() . $folderName . '/');
 	}
 
@@ -401,7 +401,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \TYPO3\CMS\Core\Resource\File
 	 */
 	public function addFile($localFilePath, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $fileName, \TYPO3\CMS\Core\Resource\AbstractFile $updateFileObject = NULL) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($localFilePath, $targetFolder, $fileName, $updateFileObject), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($localFilePath, $targetFolder, $fileName, $updateFileObject), 'Hello from ' . __METHOD__);
 		$targetIdentifier = $targetFolder->getIdentifier() . $fileName;
 		if (is_uploaded_file($localFilePath)) {
 			$moveResult = file_put_contents(
@@ -444,7 +444,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function addFileRaw($localFilePath, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $targetFileName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($localFilePath, $targetFolder, $targetFileName), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($localFilePath, $targetFolder, $targetFileName), 'Hello from ' . __METHOD__);
 		$targetIdentifier = $targetFolder->getIdentifier() . $targetFileName;
 		return file_put_contents(
 			$this->getStreamWrapperPath($targetIdentifier),
@@ -459,7 +459,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \string
 	 */
 	public function moveFileWithinStorage(\TYPO3\CMS\Core\Resource\FileInterface $file, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $fileName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $targetFolder, $fileName), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $targetFolder, $fileName), 'Hello from ' . __METHOD__);
 		$targetIdentifier = $targetFolder->getIdentifier() . $fileName;
 		$this->renameObject($file->getIdentifier(), $targetIdentifier);
 		return $targetIdentifier;
@@ -472,7 +472,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \TYPO3\CMS\Core\Resource\FileInterface
 	 */
 	public function copyFileWithinStorage(\TYPO3\CMS\Core\Resource\FileInterface $file, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $fileName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $targetFolder, $fileName), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $targetFolder, $fileName), 'Hello from ' . __METHOD__);
 		$targetIdentifier = $targetFolder->getIdentifier() . $fileName;
 		$this->copyObject($file->getIdentifier(), $targetIdentifier);
 		return $this->getFile($targetIdentifier);
@@ -521,7 +521,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @throws \RuntimeException
 	 */
 	public function copyFileToTemporaryPath(\TYPO3\CMS\Core\Resource\FileInterface $file) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
 		$sourcePath = $this->getStreamWrapperPath($file);
 		$temporaryPath = $this->getTemporaryPathForFile($file);
 		$result = copy($sourcePath, $temporaryPath);
@@ -536,7 +536,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function deleteFile(\TYPO3\CMS\Core\Resource\FileInterface $file) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
 		$this->deleteObject($file->getIdentifier());
 	}
 
@@ -546,7 +546,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function deleteFolder(\TYPO3\CMS\Core\Resource\Folder $folder, $deleteRecursively = FALSE) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($deleteRecursively => $folder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($deleteRecursively => $folder), 'Hello from ' . __METHOD__);
 		if ($deleteRecursively) {
 			$items = $this->s3Client->listObjects(array(
 				'Bucket' => $this->configuration['bucket'],
@@ -600,7 +600,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \array<\boolean>
 	 */
 	public function getFilePermissions(\TYPO3\CMS\Core\Resource\FileInterface $file) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
 		return $this->getObjectPermissions($file->getIdentifier());
 	}
 
@@ -609,7 +609,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \array<\boolean>
 	 */
 	public function getFolderPermissions(\TYPO3\CMS\Core\Resource\Folder $folder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
 		return $this->getObjectPermissions($folder->getIdentifier());
 	}
 
@@ -655,7 +655,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \TYPO3\CMS\Core\Resource\File
 	 */
 	public function createFile($fileName, \TYPO3\CMS\Core\Resource\Folder $parentFolder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($fileName => $parentFolder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($fileName => $parentFolder), 'Hello from ' . __METHOD__);
 		$identifier = $parentFolder->getIdentifier() . $fileName;
 		$this->createObject($identifier);
 		$fileInfo = $this->getFileInfoByIdentifier($identifier);
@@ -671,7 +671,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \TYPO3\CMS\Core\Resource\Folder
 	 */
 	public function createFolder($newFolderName, \TYPO3\CMS\Core\Resource\Folder $parentFolder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newFolderName => $parentFolder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newFolderName => $parentFolder), 'Hello from ' . __METHOD__);
 		$newFolderName = trim($newFolderName, '/');
 
 		$identifier = $parentFolder->getIdentifier() . $newFolderName . '/';
@@ -710,7 +710,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \integer
 	 */
 	public function setFileContents(\TYPO3\CMS\Core\Resource\FileInterface $file, $contents) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $contents), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($file, $contents), 'Hello from ' . __METHOD__);
 		return file_put_contents($this->getStreamWrapperPath($file->getIdentifier()), $contents);
 	}
 
@@ -720,7 +720,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \string
 	 */
 	public function renameFile(\TYPO3\CMS\Core\Resource\FileInterface $file, $newName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newName => $file), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newName => $file), 'Hello from ' . __METHOD__);
 		$newIdentifier = $file->getIdentifier();
 		$namePivot = strrpos($newIdentifier, $file->getName());
 		$newIdentifier = substr($newIdentifier, 0, $namePivot) . $newName;
@@ -737,7 +737,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \array<\string>
 	 */
 	public function renameFolder(\TYPO3\CMS\Core\Resource\Folder $folder, $newName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newName => $folder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($newName => $folder), 'Hello from ' . __METHOD__);
 		$this->resetIdentifierMap();
 
 		$parentFolderName = dirname($folder->getIdentifier());
@@ -830,7 +830,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return void
 	 */
 	public function renameObject($identifier, $newIdentifier) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($identifier, $newIdentifier), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($identifier, $newIdentifier), 'Hello from ' . __METHOD__);
 		rename($this->getStreamWrapperPath($identifier), $this->getStreamWrapperPath($newIdentifier));
 		$this->identifierMap[$identifier] = $newIdentifier;
 	}
@@ -844,7 +844,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \array<\string> The identifier map
 	 */
 	public function moveFolderWithinStorage(\TYPO3\CMS\Core\Resource\Folder $folderToMove, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $newFolderName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderToMove, $targetFolder, $newFolderName), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderToMove, $targetFolder, $newFolderName), 'Hello from ' . __METHOD__);
 		$this->resetIdentifierMap();
 
 		$newIdentifier = $targetFolder->getIdentifier() . $newFolderName . '/';
@@ -867,7 +867,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function copyFolderWithinStorage(\TYPO3\CMS\Core\Resource\Folder $folderToCopy, \TYPO3\CMS\Core\Resource\Folder $targetFolder, $newFolderName) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderToCopy, $targetFolder, $newFolderName), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($folderToCopy, $targetFolder, $newFolderName), 'Hello from ' . __METHOD__);
 
 		$newIdentifier = $targetFolder->getIdentifier() . $newFolderName . '/';
 		$this->copyObject($folderToCopy->getIdentifier(), $newIdentifier);
@@ -891,7 +891,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \TYPO3\CMS\Core\Resource\Folder
 	 */
 	public function getFolderInFolder($name, \TYPO3\CMS\Core\Resource\Folder $parentFolder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($name, $parentFolder), 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(array($name, $parentFolder), 'Hello from ' . __METHOD__);
 		$folderIdentifier = $parentFolder->getIdentifier() . $name . '/';
 		return $this->getFolder($folderIdentifier);
 	}
@@ -901,7 +901,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function isFolderEmpty(\TYPO3\CMS\Core\Resource\Folder $folder) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
 		$result = $this->s3Client->listObjects(array(
 			'Bucket' => $this->configuration['bucket'],
 			'Prefix' => $folder->getIdentifier()
@@ -922,7 +922,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function isWithin(\TYPO3\CMS\Core\Resource\Folder $folder, $identifier) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($folder, 'Hello from ' . __METHOD__);
 		return $this->objectExists($folder->getIdentifier() . $identifier);
 	}
 
@@ -933,7 +933,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 * @return \boolean
 	 */
 	public function resourceExists($identifier) {
-		\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump('Hello from ' . __METHOD__, $identifier);
+		//\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump('Hello from ' . __METHOD__, $identifier);
 		return $this->objectExists($identifier);
 	}
 
