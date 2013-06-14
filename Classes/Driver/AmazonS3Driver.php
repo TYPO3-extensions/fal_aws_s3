@@ -109,11 +109,13 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 		if (!isset($configuration['composerPath']) || $configuration['composerPath'] === '') {
 			$configuration['composerPath'] = PATH_site . 'typo3conf/';
 		}
-		require_once $configuration['composerPath'] . 'vendor/autoload.php';
+		if (file_exists($configuration['composerPath'] . 'vendor/autoload.php')) {
+			require_once $configuration['composerPath'] . 'vendor/autoload.php';
 
-		$this->initializeBaseUrl();
-		$this->capabilities = \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_BROWSABLE | \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_PUBLIC | \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_WRITABLE;
-		$this->initializeClient();
+			$this->initializeBaseUrl();
+			$this->capabilities = \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_BROWSABLE | \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_PUBLIC | \TYPO3\CMS\Core\Resource\ResourceStorage::CAPABILITY_WRITABLE;
+			$this->initializeClient();
+		}
 	}
 
 	/**
