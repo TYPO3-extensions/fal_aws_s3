@@ -34,6 +34,7 @@ namespace CORE4\FalAwsS3\Driver;
  * @package TYPO3
  * @subpackage fal_aws_s3
  * @todo Handle exceptions, write tests
+ * @todo Enable thumbnail generation
  */
 class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 
@@ -216,7 +217,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	public function getFile($identifier) {
 		if (self::DEBUG_MODE) \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($identifier, 'Hello from ' . __METHOD__);
 		$this->normalizeIdentifier($identifier);
-		return $this->getFileObject($this->getFileInfoByIdentifier($identifier));
+		return parent::getFile($identifier);
 	}
 
 	/**
@@ -605,8 +606,7 @@ class AmazonS3Driver extends \TYPO3\CMS\Core\Resource\Driver\AbstractDriver {
 	 */
 	public function getFileForLocalProcessing(\TYPO3\CMS\Core\Resource\FileInterface $file, $writable = TRUE) {
 		if (self::DEBUG_MODE) \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($file, 'Hello from ' . __METHOD__);
-		$storageRecord = $this->storage->getStorageRecord();
-		return $storageRecord['processingfolder'] . $file->getIdentifier();
+		return $this->copyFileToTemporaryPath($file);
 	}
 
 	/**
